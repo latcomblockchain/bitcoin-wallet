@@ -1,0 +1,25 @@
+{
+  "name": "bitcoin-wallet",
+  "version": "0.0.1",
+  "description": "simple bitcoin wallet",
+  "main": "index.js",
+  "scripts": {},
+  "bin": {
+    "bitcoin-wallet": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n0cte/bitcoin-wallet.git"
+  },
+  "author": "n0cte <ilnur.a.g@gmail.com>",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/n0cte/bitcoin-wallet#readme",
+  "dependencies": {
+    "bitcore-lib": "^0.14.0",
+    "commander": "^2.11.0",
+    "leveldown": "^2.0.0",
+    "levelup": "^2.0.0",
+    "node-fetch": "^1.7.3",
+    "satoshi-bitcoin": "^1.0.4"
+  }
+}
