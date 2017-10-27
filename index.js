@@ -160,8 +160,9 @@ function utxo(address){
 program
   .version('0.1.0')
   .usage('[options] <file ...>')
-  .option('-d, --datadir <datadir>', 'Data directory')
-  .option('-n, --network <network>', 'Network type (livenet||testnet). Default: testnet');
+  .option('-d, --datadir <datadir>', 'Data directory', DEFAULT_DATA_DIR)
+  .option('-n, --network <network>', 'Network type (livenet||testnet). Default: testnet', DEFAULT_NETWORK)
+  .option('-m, --data <data>', 'Data for transaction', null);
 
 program
   .command('init [dir]')
