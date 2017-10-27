@@ -42,11 +42,11 @@ function printJSON(data){
   )(data, null, 2)
 }
 
-function init(dir = DEFAULT_DATA_DIR){
+function init(){
   const {
     parent: {
-      datadir = dir,
-      network = DEFAULT_NETWORK
+      datadir,
+      network
     }
   } = this;
   const db = dbFactory(datadir);
@@ -66,8 +66,8 @@ function init(dir = DEFAULT_DATA_DIR){
 function info(){
   const {
     parent: {
-      datadir = DEFAULT_DATA_DIR,
-      network = DEFAULT_NETWORK,
+      datadir,
+      network,
     }
   } = this;
   const db = dbFactory(datadir);
@@ -78,7 +78,13 @@ function info(){
       return new bitcoin.PrivateKey(pkey)
     })
     .then(function(pkey){
-      return bitcoin.addr(pkey.toAddress().toString())
+      return Promise.all([
+        {
+          pkey: pkey.toWIF(),
+          addr: pkey.toAddress()
+        },
+        bitcoin.addr(pkey.toAddress().toString())
+      ])
     })
     .then(printJSON)
     .catch(printJSON);
@@ -87,7 +93,7 @@ function info(){
 function addr(address){
   const {
     parent: {
-      network = DEFAULT_NETWORK,
+      network,
     }
   } = this;
   const bitcoin = Blockexplorer(network);
@@ -100,7 +106,7 @@ function addr(address){
 function tx(txid){
   const {
     parent: {
-      network = DEFAULT_NETWORK,
+      network,
     }
   } = this;
   const bitcoin = Blockexplorer(network);
@@ -113,8 +119,9 @@ function tx(txid){
 function send(to, amount){
   const {
     parent: {
-      datadir = DEFAULT_DATA_DIR,
-      network = DEFAULT_NETWORK,
+      datadir,
+      network,
+      data
     }
   } = this;
   const db = dbFactory(datadir);
@@ -136,8 +143,9 @@ function send(to, amount){
       const tx = new bitcoin.Transaction()
         .from(utxos, pkey.toPublicKey())
         .to(to, parseInt(amount))
-        .change(from)
-        .sign(pkey);
+        .change(from);
+      !!data && tx.addData(data);
+      tx.sign(pkey);
       return bitcoin.txSend(tx.serialize());
     })
     .then(printJSON)
@@ -147,7 +155,7 @@ function send(to, amount){
 function utxo(address){
   const {
     parent: {
-      network = DEFAULT_NETWORK,
+      network
     }
   } = this;
   const bitcoin = Blockexplorer(network);
@@ -165,8 +173,8 @@ program
   .option('-m, --data <data>', 'Data for transaction', null);
 
 program
-  .command('init [dir]')
-  .description('Init wallet data in <dir>. Default directory: ~/.bitcoin-wallet')
+  .command('init')
+  .description('Init wallet data in <datadir>. Default directory: ~/.bitcoin-wallet')
   .action(init);
 
 program
